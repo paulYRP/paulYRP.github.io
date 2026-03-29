@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Paul Ruiz | Website
 
-## Getting Started
+Welcome to my personal website repository.
 
-First, run the development server:
+## About this project
+
+This website is a personal portfolio and research-focused site. It includes:
+
+- a home page with a short personal introduction
+- project and topic pages
+- a research section that aggregates selected publications and software
+- static assets such as images and videos used across the site
+
+This project uses:
+
+- [Next.js](https://nextjs.org/)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [React Markdown](https://github.com/remarkjs/react-markdown)
+- [remark-gfm](https://github.com/remarkjs/remark-gfm)
+- [Cheerio](https://cheerio.js.org/)
+- [yahoo-finance2](https://github.com/gadicc/node-yahoo-finance2)
+
+## Content
+
+Part of the website content is generated automatically before development and production builds.
+
+The script below is run before `npm run dev` and `npm run build`:
+
+```bash
+node app/research/build-research.mjs
+````
+
+This script reads and combines information from:
+
+* `app/research/pubmed/urls.json`
+* `app/research/github/software.json`
+* markdown files stored in `app/research/github/`
+
+It then generates:
+
+* `app/research/generated/data.ts`
+
+## How to run this project locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/paulYRP/paulYRP.github.io.git
+cd paulYRP.github.io
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build the project:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How to reproduce the research section
 
-## Learn More
+To reproduce the generated research content:
 
-To learn more about Next.js, take a look at the following resources:
+1. install the project dependencies
+2. make sure the source files under `app/research/` are present
+3. run:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+node app/research/build-research.mjs
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This will rebuild the generated research data file used by the website.
 
-## Deploy on Vercel
+If you would like to add more publications or software entries, update:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* `app/research/pubmed/urls.json`
+* `app/research/github/software.json`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+and add any matching markdown source files.
+
+## Acknowledgement
+
+Please acknowledge the open-source tools that made this project possible, especially Next.js, React, Tailwind CSS, Framer Motion.
+
+## Contact
+
+You are welcome to get in touch if you would like to collaborate, ask a question, or discuss related work.
+
+
+
