@@ -1,0 +1,13 @@
+[
+  {
+    "id": "dnaEPICO",
+    "name": "dnaEPICO",
+    "owner": "paulYRP",
+    "repo": "dnaEPICO",
+    "branch": "devel",
+    "repoUrl": "https://github.com/paulYRP/dnaEPICO",
+    "year": 2026,
+    "tags": ["Bioconductor", "DNA methylation", "EPICv2"],
+    "readmeFile": "dnaEPICO.md"
+  }
+]
