@@ -1,150 +1,161 @@
 "use client";
-import React, { useRef } from "react";
-import Image from "next/image";
+
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { useRef } from "react";
+
+const profileLinks = [
+  {
+    href: "https://github.com/paulYRP",
+    label: "GitHub profile",
+    icon: "fab fa-github",
+  },
+  {
+    href: "https://www.linkedin.com/in/pyrp/",
+    label: "LinkedIn profile",
+    icon: "fab fa-linkedin",
+  },
+  {
+    href: "https://research.qut.edu.au/qutcds/staff/paul-ruiz-pinto/",
+    label: "QUT research profile",
+    icon: "fas fa-building",
+  },
+];
 
 export default function Home() {
-  const videoRef = useRef<HTMLElement | null>(null);
-  const handleScroll = () => videoRef.current?.scrollIntoView({ behavior: "smooth" });
+  const introductionRef = useRef<HTMLElement | null>(null);
 
   return (
     <main className="flex flex-col">
-      {/* Section 1 */}
-      <section className="relative flex flex-col justify-center items-center h-screen overflow-hidden text-white text-center"> {/* <---- CHANGE */}
-
-        {/* 🎬 Background Video */}
+      <section className="relative flex h-screen flex-col items-center justify-center overflow-hidden text-center text-white">
         <video
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
+          preload="metadata"
+          className="absolute inset-0 h-full w-full object-cover"
         >
           <source src="/home/videos/video7.mp4" type="video/mp4" />
         </video>
 
-        {/* 🖤 Overlay */}
-        <div className="absolute inset-0 bg-black/60 z-0" />
+        <div className="absolute inset-0 z-0 bg-black/60" />
 
-        {/* 🖼 Centered Logo + Text */}
-        <div className="relative z-10 flex flex-col items-center space-y-0"> {/* <---- CHANGE */}
-
-          {/* 🖼 Clickable Logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="relative z-10"
+        >
+          <button
+            type="button"
+            onClick={() =>
+              introductionRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
+            aria-label="Continue to the introduction"
+            className="rounded-xl transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-orange-300"
           >
-            <button
-              onClick={handleScroll}
-              aria-label="Scroll to next section"
-              className="hover:opacity-90 transition-opacity"
-            >
-              <Image
-                src="/home/images/image6.png"
-                alt="CHOLO Logo"
-                width={300}
-                height={100}
-                className="drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]" // <---- CHANGE
-              />
-            </button>
-          </motion.div>
-
-         
-        </div>
+            <Image
+              src="/home/images/image6.png"
+              alt="CHOLO"
+              width={300}
+              height={100}
+              className="site-logo-glow"
+              priority
+            />
+          </button>
+        </motion.div>
       </section>
 
-      {/* 🎥 Section 2 */}
       <section
-        ref={videoRef}
-        className="relative flex min-h-screen items-center justify-start overflow-hidden bg-black text-white font-sans"
+        ref={introductionRef}
+        className="relative flex min-h-screen items-center overflow-hidden bg-black text-white"
       >
         <video
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
+          preload="metadata"
+          className="absolute inset-0 h-full w-full object-cover"
         >
           <source src="/home/videos/video5.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-black/50 z-0" />
-        <div className="relative z-10 text-left pl-30 space-y-4">
-          <p className="max-w-xl text-lg font-extrabold text-orange-200 tracking-wide drop-shadow-[0_0_20px_rgba(249,115,22,0.8)] mt-0 leading-relaxed">
-            <span className="block">
-              Hi, welcome to my website. If you are here, it may be because<span className="text-white font-high bg-white/10 px-2 py-0.5 rounded">we share a common interest or because you are also from Peru.</span>
-            </span>{" "}
-            <span className="block">
-              The video above shows the main square of<span className="text-white font-high bg-white/10 px-2 py-0.5 rounded"> Cusco</span>, in the south of Peru. I spent half of my life there and the other half in <span className="text-white font-high bg-white/10 px-2 py-0.5 rounded">Tumbes</span>, in the north of Peru. Both places have distinct cultures and ways of thinking, and both have shaped who I am.
-            </span>{" "}
-            <span className="block">
-              The second video shows another of my interests, <span className="text-white font-high bg-white/10 px-2 py-0.5 rounded">the stock market.</span>
-              On this website, you will find a little of everything:<span className="text-white font-high bg-white/10 px-2 py-0.5 rounded">computational biology, combat sports, and the stock market. </span>
-            </span>{" "}
-            <span className="block">
-              Nice to meet you. Please feel free to contact me if you would like to collaborate or simply have a chat.
-            </span>
-          </p>
-        </div>
+        <div className="absolute inset-0 z-0 bg-black/60" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 w-full px-6 py-24 sm:px-12 lg:pl-24"
+        >
+          <div className="max-w-2xl space-y-5 rounded-3xl border border-white/10 bg-black/45 p-7 shadow-2xl backdrop-blur-sm sm:p-9">
+            <p className="text-xl font-semibold leading-relaxed text-orange-200 sm:text-2xl">
+              Welcome. This website brings together the interests that have
+              shaped my personal and professional life.
+            </p>
+
+            <p className="text-base leading-relaxed text-gray-100 sm:text-lg">
+              The first video shows the main square of{" "}
+              <span className="font-semibold text-white">Cusco</span> in
+              southern Peru. I spent half of my life in Cusco and the other
+              half in <span className="font-semibold text-white">Tumbes</span>{" "}
+              in northern Peru. Their distinct cultures and perspectives
+              continue to influence how I see the world.
+            </p>
+
+            <p className="text-base leading-relaxed text-gray-100 sm:text-lg">
+              The second video reflects another interest: financial markets.
+              Across the site, I share work and experiences in{" "}
+              <span className="font-semibold text-white">
+                computational biology, investment research, and combat sports
+              </span>
+              .
+            </p>
+
+            <p className="text-base leading-relaxed text-gray-100 sm:text-lg">
+              Thank you for visiting. If our interests overlap, you are welcome
+              to connect through my professional profiles.
+            </p>
+          </div>
+        </motion.div>
       </section>
-    
-      {/* 🌐 Section 3: Connect with Me */}
-      <section className="relative flex flex-col items-center justify-center min-h-[70vh] bg-black text-white overflow-hidden">
-        {/* Gradient overlay for depth */}
+
+      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden bg-black px-6 text-white">
         <div className="absolute inset-0 bg-gradient-to-t from-black via-zinc-900 to-black opacity-90" />
 
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="relative z-10 flex flex-col items-center text-center space-y-6"
+          viewport={{ amount: 0.4 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 flex flex-col items-center space-y-8 text-center"
         >
-          {/* 🔗 Social Links */}
-          <div className="flex space-x-10 mt-6">
-            {/* GitHub */}
-            <motion.a
-              href="https://github.com/paulYRP"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.2 }}
-              className="text-orange-500 hover:text-orange-400 transition-colors duration-300"
-            >
-              <i className="fab fa-github text-5xl animate-pulseGlow"></i>
-            </motion.a>
-
-            {/* LinkedIn */}
-            <motion.a
-              href="https://www.linkedin.com/in/pyrp/"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.2 }}
-              className="text-orange-500 hover:text-orange-400 transition-colors duration-300"
-            >
-              <i className="fab fa-linkedin text-5xl drop-shadow-[0_0_15px_rgba(255,165,0,0.4)]"></i>
-            </motion.a>
-
-            {/* Workplace */}
-            <motion.a
-              href="https://research.qut.edu.au/qutcds/staff/paul-ruiz-pinto/"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.2 }}
-              className="text-orange-500 hover:text-orange-400 transition-colors duration-300"
-            >
-              <i className="fas fa-building text-5xl drop-shadow-[0_0_15px_rgba(255,165,0,0.4)]"></i>
-            </motion.a>
+          <div className="flex flex-wrap justify-center gap-8">
+            {profileLinks.map((profile) => (
+              <motion.a
+                key={profile.href}
+                href={profile.href}
+                aria-label={profile.label}
+                title={profile.label}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.12, y: -3 }}
+                className="flex h-16 w-16 items-center justify-center rounded-full border border-orange-400/25 bg-orange-400/10 text-orange-500 transition-colors hover:text-orange-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400"
+              >
+                <i aria-hidden="true" className={`${profile.icon} text-4xl`} />
+                <span className="sr-only">{profile.label}</span>
+              </motion.a>
+            ))}
           </div>
 
-          {/* Subtle footer text */}
-          <p className="mt-8 text-sm text-gray-500">
+          <p className="pt-6 text-sm text-gray-500">
             © {new Date().getFullYear()} CHOLO
           </p>
         </motion.div>
       </section>
-
     </main>
   );
 }

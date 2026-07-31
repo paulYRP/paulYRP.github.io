@@ -1,129 +1,131 @@
 "use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image"; 
-import { usePathname } from "next/navigation"; 
 
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const navigation = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/research", label: "Research" },
+  { href: "/market", label: "Investment" },
+  { href: "/sport", label: "Sports" },
+  { href: "/contact", label: "Contact" },
+];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const handleToggle = () => setIsOpen(!isOpen);
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+  const showLogo = pathname !== "/";
 
-  const showLogo = ["/dashboard", "/about", "/contact"].includes(pathname);
+  useEffect(() => {
+    if (!isOpen) return;
 
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [isOpen]);
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full text-orange-200 bg-transparent transition-all duration-300">
-        {/* 🧭 Main Navbar Container */}
-        <div
-          className={`mx-auto flex w-full items-center px-8 py-6 ${
-            showLogo ? "justify-between" : "justify-end"
-          }`}>
-
-          {/* 🟠 Left Side: Conditional Logo */}
-          {showLogo && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex items-center"
+    <header className="fixed left-0 top-0 z-50 w-full bg-transparent text-orange-200">
+      <div
+        className={`mx-auto flex w-full items-center px-6 py-5 sm:px-8 ${
+          showLogo ? "justify-between" : "justify-end"
+        }`}
+      >
+        {showLogo && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Link
+              href="/"
+              aria-label="Go to the CHOLO home page"
+              className="flex items-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400"
             >
-              <Link href="/" className="flex items-center space-x-2">
-                <Image
-                  src="/image/image6.png"
-                  alt="CHOLO Logo"
-                  width={60}
-                  height={10}
-                  className="drop-shadow-[0_0_20px_rgba(255,140,0,0.5)] hover:opacity-90 transition-opacity"
-                />
-              </Link>
-            </motion.div>
+              <Image
+                src="/home/images/image6.png"
+                alt=""
+                width={72}
+                height={24}
+                className="site-logo-glow h-auto w-[72px] transition-opacity hover:opacity-90"
+                priority
+              />
+            </Link>
+          </motion.div>
         )}
-      
-        {/* 🍔 Hamburger Icon */}
-        <div
-          id="hamburger"
-          aria-label="Toggle menu"
-          className="relative w-8 h-6 cursor-pointer flex flex-col justify-between"
-          onClick={handleToggle}
+
+        <button
+          type="button"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isOpen}
+          aria-controls="site-navigation"
+          onClick={() => setIsOpen((open) => !open)}
+          className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full bg-black/45 backdrop-blur-sm transition hover:bg-black/65 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400"
         >
           <span
-            className={`block h-1 bg-orange-500 rounded transition-all duration-300 ${
-              isOpen ? "rotate-45 translate-y-2.5" : ""
+            aria-hidden="true"
+            className={`block h-0.5 w-7 rounded bg-orange-500 transition duration-300 ${
+              isOpen ? "translate-y-2 rotate-45" : ""
             }`}
           />
           <span
-            className={`block h-1 bg-orange-500 rounded transition-all duration-300 ${
+            aria-hidden="true"
+            className={`block h-0.5 w-7 rounded bg-orange-500 transition duration-300 ${
               isOpen ? "opacity-0" : ""
             }`}
           />
           <span
-            className={`block h-1 bg-orange-500 rounded transition-all duration-300 ${
-              isOpen ? "-rotate-45 -translate-y-2.5" : ""
+            aria-hidden="true"
+            className={`block h-0.5 w-7 rounded bg-orange-500 transition duration-300 ${
+              isOpen ? "-translate-y-2 -rotate-45" : ""
             }`}
           />
-        </div>
+        </button>
       </div>
 
-      {/* 🟠 Animated Dropdown */}
       <AnimatePresence>
         {isOpen && (
           <motion.nav
+            id="site-navigation"
+            aria-label="Primary navigation"
             key="menu"
-            initial={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="absolute top-full right-0 w-56 bg-black/90 backdrop-blur-md border-l border-orange-400/30 rounded-bl-2xl overflow-hidden shadow-lg"
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="absolute right-0 top-full w-60 overflow-hidden rounded-bl-2xl border-b border-l border-orange-400/30 bg-black/95 shadow-2xl backdrop-blur-md"
           >
-            <ul className="flex flex-col items-center text-lg py-6 space-y-4 font-semibold">
-              <li>
-                <Link
-                  href="/"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-400 transition-colors duration-300"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/research"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-400 transition-colors duration-300"
-                >
-                  Research
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/market"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-400 transition-colors duration-300"
-                >
-                  Investment
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/sport"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-400 transition-colors duration-300"
-                >
-                  Sports
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-400 transition-colors duration-300"
-                >
-                  Contact
-                </Link>
-              </li>
+            <ul className="flex flex-col py-4 text-lg font-semibold">
+              {navigation.map((item) => {
+                const isCurrent =
+                  item.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.href);
+
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={isCurrent ? "page" : undefined}
+                      onClick={() => setIsOpen(false)}
+                      className={`block px-8 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-orange-400 ${
+                        isCurrent
+                          ? "bg-orange-400/10 text-orange-300"
+                          : "hover:bg-white/5 hover:text-orange-400"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </motion.nav>
         )}

@@ -7,15 +7,14 @@ type CardItem = {
   title: string;
   subtitle: string;
   src: string;
-  kind: "video" | "image";
   poster?: string;
 };
 
 const highlights = [
   "Judo",
   "Wrestling",
-  "Jiu Jitsu",
-  "Mental and emotional strength",
+  "Jiu-jitsu",
+  "Discipline and resilience",
 ];
 
 const competitionVideos: CardItem[] = [
@@ -24,28 +23,24 @@ const competitionVideos: CardItem[] = [
     subtitle: "Australia",
     src: "/sport/videos/grappling/video1.mp4",
     poster: "/sport/images/grappling/image1.jpg",
-    kind: "video",
   },
   {
     title: "Grappling 2",
     subtitle: "Australia",
     src: "/sport/videos/grappling/video2.mp4",
     poster: "/sport/images/grappling/image2.jpg",
-    kind: "video",
   },
   {
     title: "Grappling 3",
     subtitle: "Australia",
     src: "/sport/videos/grappling/video3.mp4",
     poster: "/sport/images/grappling/image3.jpg",
-    kind: "video",
   },
   {
     title: "Grappling 4",
     subtitle: "Australia",
     src: "/sport/videos/grappling/video4.mp4",
     poster: "/sport/images/grappling/image4.jpg",
-    kind: "video",
   },
  
   {
@@ -53,44 +48,20 @@ const competitionVideos: CardItem[] = [
     subtitle: "Australia",
     src: "/sport/videos/qbbjc/video1.mp4",
     poster: "/sport/images/qbbjc/image1.jpg",
-    kind: "video",
   },
   {
     title: "QBBJC 2",
     subtitle: "Australia",
     src: "/sport/videos/qbbjc/video2.mp4",
     poster: "/sport/images/qbbjc/image2.jpg",
-    kind: "video",
   },
   {
     title: "QBBJC 3",
     subtitle: "Australia",
     src: "/sport/videos/qbbjc/video3.mp4",
     poster: "/sport/images/qbbjc/image3.jpg",
-    kind: "video",
   },
 ];
-
-// const competitionImages: CardItem[] = [
-//   {
-//     title: "Judo Competition",
-//     subtitle: "Moments from training and competition",
-//     src: "/sport/images/judo-image.jpg",
-//     kind: "image",
-//   },
-//   {
-//     title: "Wrestling Competition",
-//     subtitle: "Moments from training and competition",
-//     src: "/sport/images/wrestling-image.jpg",
-//     kind: "image",
-//   },
-//   {
-//     title: "Jiu Jitsu Competition",
-//     subtitle: "Moments from training and competition",
-//     src: "/sport/images/bjj-image.jpg",
-//     kind: "image",
-//   },
-// ];
 
 function ArrowLeftIcon() {
   return (
@@ -179,24 +150,16 @@ function SliderSection({
             className="min-w-[340px] max-w-[340px] overflow-hidden rounded-[28px] bg-zinc-100 shadow-xl md:min-w-[420px] md:max-w-[420px]"
           >
             <div className="relative h-[240px] w-full overflow-hidden bg-zinc-900 md:h-[300px]">
-              {item.kind === "video" ? (
-                <video
-                  className="h-full w-full object-cover"
-                  controls
-                  playsInline
-                  preload="metadata"
-                  poster={item.poster}
-                >
-                  <source src={item.src} type="video/mp4" />
-                  Your browser does not support this video.
-                </video>
-              ) : (
-                <img
-                  src={item.src}
-                  alt={item.title}
-                  className="h-full w-full object-cover"
-                />
-              )}
+              <video
+                className="h-full w-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                poster={item.poster}
+              >
+                <source src={item.src} type="video/mp4" />
+                Your browser does not support this video.
+              </video>
             </div>
 
             <div className="px-8 py-8 text-black">
@@ -220,7 +183,7 @@ export default function Sport() {
           transition={{ duration: 0.8 }}
           className="text-center text-5xl font-bold text-orange-400 drop-shadow-[0_0_15px_rgba(255,165,0,0.5)] md:text-6xl"
         >
-          Sport
+          Sports
         </motion.h1>
 
         <motion.div
@@ -230,17 +193,18 @@ export default function Sport() {
           className="mx-auto mt-10 max-w-7xl rounded-3xl border border-orange-500/20 bg-white/5 p-8 shadow-lg backdrop-blur-sm"
         >
           <p className="text-lg leading-relaxed text-gray-300 md:text-xl">
-            My sport side is passionate for combat sports, specifically{" "}
+            Combat sports have been part of my life for more than 15 years. I
+            practise{" "}
             <span className="font-semibold text-orange-300">judo</span>,{" "}
             <span className="font-semibold text-orange-300">wrestling</span> and{" "}
-            <span className="font-semibold text-orange-300">jiu jitsu</span>.
-            Two of them are Olympic sports, and from my perspective they are the
-            best individual sports where mental and emotional strength are tested
-            and exposed to another level of yourself if you decide it mentally.
+            <span className="font-semibold text-orange-300">jiu-jitsu</span>.
+            These disciplines challenge physical ability while also developing
+            patience, decision-making, emotional control, and resilience.
           </p>
 
           <p className="mt-5 text-lg leading-relaxed text-gray-300 md:text-xl">
-            My aim is to enjoy seeing how far I can take my body in these sports.
+            I train and compete because I enjoy the process of learning, testing
+            my limits, and improving over time.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -264,14 +228,12 @@ export default function Sport() {
             <h2 className="text-3xl font-bold text-orange-300 md:text-4xl">
               Competitions
             </h2>
-            {/* <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-400 md:text-lg">
-              A selected collection of videos and images across the combat
-              sports I practise and follow.
-            </p> */}
           </motion.div>
 
-          <SliderSection title="" items={competitionVideos} />
-          {/* <SliderSection title="Images" items={competitionImages} /> */}
+          <SliderSection
+            title="Videos"
+            items={competitionVideos}
+          />
         </section>
       </div>
     </main>

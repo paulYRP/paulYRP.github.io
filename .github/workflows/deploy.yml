@@ -36,6 +36,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_API_URL: ${{ vars.NEXT_PUBLIC_SITE_API_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4

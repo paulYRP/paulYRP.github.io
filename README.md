@@ -18,10 +18,6 @@ This project uses:
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Framer Motion](https://www.framer.com/motion/)
-- [React Markdown](https://github.com/remarkjs/react-markdown)
-- [remark-gfm](https://github.com/remarkjs/remark-gfm)
-- [Cheerio](https://cheerio.js.org/)
-- [yahoo-finance2](https://github.com/gadicc/node-yahoo-finance2)
 
 ## Content
 
@@ -31,13 +27,12 @@ The script below is run before `npm run dev` and `npm run build`:
 
 ```bash
 node app/research/build-research.mjs
-````
+```
 
-This script reads and combines information from:
+This script validates and combines curated public information from:
 
-* `app/research/pubmed/urls.json`
+* `app/research/pubmed/publications.json`
 * `app/research/github/software.json`
-* markdown files stored in `app/research/github/`
 
 It then generates:
 
@@ -86,10 +81,8 @@ This will rebuild the generated research data file used by the website.
 
 If you would like to add more publications or software entries, update:
 
-* `app/research/pubmed/urls.json`
+* `app/research/pubmed/publications.json`
 * `app/research/github/software.json`
-
-and add any matching markdown source files.
 
 ## Acknowledgement
 
@@ -98,6 +91,3 @@ Please acknowledge the open-source tools that made this project possible, especi
 ## Contact
 
 You are welcome to get in touch if you would like to collaborate, ask a question, or discuss related work.
-
-
-

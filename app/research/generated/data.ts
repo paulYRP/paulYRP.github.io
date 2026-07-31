@@ -5,7 +5,7 @@ export type Publication = {
   link: string;
   doi: string | null;
   date: string | null;
-  year: number | null;
+  year: number;
   tags: string[];
   image: string | null;
 };
@@ -20,17 +20,10 @@ export type SoftwareItem = {
   name: string;
   owner: string;
   repo: string;
-  branch: string;
   repoUrl: string;
-  year: number;
+  displayOrder: number;
+  summary: string;
   tags: string[];
-  readmeFile: string;
-  readme: string;
-};
-
-export type SoftwareGroup = {
-  year: number;
-  software: SoftwareItem[];
 };
 
 export const publications: PublicationGroup[] = [
@@ -43,14 +36,14 @@ export const publications: PublicationGroup[] = [
         "authors": [],
         "link": "https://pubmed.ncbi.nlm.nih.gov/41133714/",
         "doi": "10.3390/epigenomes9040039",
-        "date": "10/06/2025",
+        "date": "2025",
         "year": 2025,
         "tags": [
           "DNA methylation",
           "EWAS",
-          "posttraumatic growth",
-          "posttraumatic stress disorder",
-          "stress"
+          "Posttraumatic growth",
+          "Posttraumatic stress disorder",
+          "Stress"
         ],
         "image": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/2f94/12551033/f2dd5a7ddf15/epigenomes-09-00039-g001.jpg"
       }
@@ -58,26 +51,75 @@ export const publications: PublicationGroup[] = [
   }
 ];
 
-export const software: SoftwareGroup[] = [
+export const software: SoftwareItem[] = [
   {
-    "year": 2026,
-    "software": [
-      {
-        "id": "dnaEPICO",
-        "name": "dnaEPICO",
-        "owner": "paulYRP",
-        "repo": "dnaEPICO",
-        "branch": "devel",
-        "repoUrl": "https://github.com/paulYRP/dnaEPICO",
-        "year": 2026,
-        "tags": [
-          "Bioconductor",
-          "DNA methylation",
-          "EPICv2"
-        ],
-        "readmeFile": "dnaEPICO.md",
-        "readme": "<!-- README.md is generated from README.Rmd. Please edit that file -->\n\n# dnaEPICO\n\n<!-- badges: start -->\n\n<!-- badges: end -->\n\nThe goal of **`dnaEPICO`** is to provide a **modular, reproducible, and\npipeline** for the preprocessing and statistical analysis of Illumina\nDNA methylation array data (EPICv2, EPIC and 450K).\n\nThe package integrates preprocessing, quality control, phenotype\nmerging, generalised linear models (GLM), linear mixed-effects models\n(LME), and automated report generation. It is designed to run seamlessly\non local machines as well as High-Performance Computing (HPC)\nenvironments via a **GNU Make–based workflow**.\n\n## Installation instructions\n\nGet the latest stable `R` release from\n[CRAN](http://cran.r-project.org/). Then install `dnaEPICO` from\n[Bioconductor](http://bioconductor.org/) using the following code:\n\n``` r\nif (!requireNamespace(\"BiocManager\", quietly = TRUE)) {\n    install.packages(\"BiocManager\")\n}\n\nBiocManager::install(\"dnaEPICO\")\n```\n\nAnd the development version from\n[GitHub](https://github.com/paulYRP/dnaEPICO) with:\n\n``` r\nBiocManager::install(\"paulYRP/dnaEPICO\")\n```\n\n## Articles:\n\n- [**A Pilot Epigenome-Wide Study of Posttraumatic Growth: Identifying\n  Novel Candidates for Future\n  Research**](https://www.mdpi.com/2075-4655/9/4/39)\n\n## Tutorials:\n\n- [**DNA Methylation\n  Tutorial**](https://paulYRP.github.io/2025-cpgpneurogenomics-workshop/tutorial.html)\n- [**Getting\n  Started**](https://github.com/paulYRP/dnaEPICO/wiki/Getting-Started)\n- [**Requirements**](https://github.com/paulYRP/dnaEPICO/wiki/Requirements)\n\n## Citation\n\nBelow is the citation output from using `citation('dnaEPICO')` in R.\nPlease run this yourself to check for any updates on how to cite\n**dnaEPICO**.\n\n``` r\nprint(citation('dnaEPICO'), bibtex = TRUE)\n#> dnaEPICO: Analysis Pipeline for Illumina DNA Methylation Array Data,\n#> generated as part of 10.3390/epigenomes9040039\n#> \n#>   Ruiz P, Mehta D (2025). \"dnaEPICO: Analysis Pipeline for Illumina DNA\n#>   Methylation Array Data.\" _Epigenomes_. doi:10.3390/epigenomes9040039\n#>   <https://doi.org/10.3390/epigenomes9040039>,\n#>   <https://bioconductor.org/packages/dnaEPICO>.\n#> \n#> A BibTeX entry for LaTeX users is\n#> \n#>   @Article{,\n#>     title = {dnaEPICO: Analysis Pipeline for Illumina DNA Methylation Array Data},\n#>     doi = {10.3390/epigenomes9040039},\n#>     journal = {Epigenomes},\n#>     author = {Paul Ruiz and Divya Mehta},\n#>     year = {2025},\n#>     url = {https://bioconductor.org/packages/dnaEPICO},\n#>   }\n```\n\nPlease note that the `dnaEPICO` was only made possible thanks to many\nother R and bioinformatics software authors, which are cited either in\nthe vignettes and/or the paper(s) describing this package.\n\n## Code of Conduct\n\nPlease note that the `dnaEPICO` project is released with a [Contributor\nCode of Conduct](http://bioconductor.org/about/code-of-conduct/). By\ncontributing to this project, you agree to abide by its terms.\n\n## Development tools\n\n- Continuous code testing is possible thanks to [GitHub\n  actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)\n  through *[usethis](https://CRAN.R-project.org/package=usethis)*,\n  *[remotes](https://CRAN.R-project.org/package=remotes)*, and\n  *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized\n  to use [Bioconductor’s docker\n  containers](https://www.bioconductor.org/help/docker/) and\n  *[BiocCheck](https://bioconductor.org/packages/3.20/BiocCheck)*.\n- Code coverage assessment is possible thanks to\n  [codecov](https://codecov.io/gh) and\n  *[covr](https://CRAN.R-project.org/package=covr)*.\n- The [documentation website](http://paulYRP.github.io/dnaEPICO) is\n  automatically updated thanks to\n  *[pkgdown](https://CRAN.R-project.org/package=pkgdown)*.\n- The code is styled automatically thanks to\n  *[styler](https://CRAN.R-project.org/package=styler)*.\n- The documentation is formatted thanks to\n  *[devtools](https://CRAN.R-project.org/package=devtools)* and\n  *[roxygen2](https://CRAN.R-project.org/package=roxygen2)*.\n\nFor more details, check the `dev` directory.\n\nThis package was developed using\n*[biocthis](https://bioconductor.org/packages/3.20/biocthis)*."
-      }
+    "id": "dnaEPICO",
+    "name": "dnaEPICO",
+    "owner": "paulYRP",
+    "repo": "dnaEPICO",
+    "repoUrl": "https://github.com/paulYRP/dnaEPICO",
+    "displayOrder": 1,
+    "summary": "A modular and reproducible pipeline for preprocessing and statistically analysing Illumina DNA methylation array data from the EPICv2, EPIC, and 450K platforms.",
+    "tags": [
+      "Bioconductor",
+      "DNA methylation",
+      "Reproducible workflows"
+    ]
+  },
+  {
+    "id": "cds-seed",
+    "name": "cds-seed",
+    "owner": "paulYRP",
+    "repo": "cds-seed",
+    "repoUrl": "https://github.com/paulYRP/cds-seed",
+    "displayOrder": 2,
+    "summary": "Evidence and an interactive framework for designing and evaluating synthetic data projects in sport, with attention to privacy, utility, fidelity, and deployment.",
+    "tags": [
+      "Synthetic data",
+      "Sports analytics",
+      "Privacy"
+    ]
+  },
+  {
+    "id": "GSE142512",
+    "name": "GSE142512",
+    "owner": "paulYRP",
+    "repo": "GSE142512",
+    "repoUrl": "https://github.com/paulYRP/GSE142512",
+    "displayOrder": 3,
+    "summary": "A Bioconductor ExperimentHub data package providing processed 450K and EPIC DNA methylation resources derived from GEO Series GSE142512.",
+    "tags": [
+      "ExperimentHub",
+      "DNA methylation",
+      "450K and EPIC"
+    ]
+  },
+  {
+    "id": "GSE280465",
+    "name": "GSE280465",
+    "owner": "paulYRP",
+    "repo": "GSE280465",
+    "repoUrl": "https://github.com/paulYRP/GSE280465",
+    "displayOrder": 4,
+    "summary": "A Bioconductor ExperimentHub data package providing a processed adult EPICv2 DNA methylation resource derived from GEO Series GSE280465.",
+    "tags": [
+      "ExperimentHub",
+      "DNA methylation",
+      "EPICv2"
+    ]
+  },
+  {
+    "id": "2025-cpgpneurogenomics-workshop",
+    "name": "2025-cpgpneurogenomics-workshop",
+    "owner": "paulYRP",
+    "repo": "2025-cpgpneurogenomics-workshop",
+    "repoUrl": "https://github.com/paulYRP/2025-cpgpneurogenomics-workshop",
+    "displayOrder": 5,
+    "summary": "Practical training materials for a statistical genomics, bioinformatics, and neurogenomics workshop, including preparation for R, RStudio, and PLINK.",
+    "tags": [
+      "Training",
+      "Neurogenomics",
+      "R and PLINK"
     ]
   }
 ];

@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import Script from "next/script";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
+import CholoAssistant from "./cholo-assistant";
 import Navbar from "./navbar";
 
 const roboto = Roboto({
@@ -41,7 +42,8 @@ export default function RootLayout({
           `}
         </Script>
         <Navbar />
-        <div>{children}</div> {/* <---- CHANGE: removed padding */}
+        <CholoAssistant />
+        {children}
       </body>
     </html>
   );

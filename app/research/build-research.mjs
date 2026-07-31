@@ -1,169 +1,23 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import * as cheerio from "cheerio";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
-const pubmedUrlsFile = path.join(root, "pubmed", "urls.json");
+const publicationsMetaFile = path.join(
+  root,
+  "pubmed",
+  "publications.json",
+);
 const softwareMetaFile = path.join(root, "github", "software.json");
-const githubDir = path.join(root, "github");
 const outFile = path.join(root, "generated", "data.ts");
-
-const cleanText = (x) => x.replace(/\s+/g, " ").trim();
-
-const getPmid = (url) =>
-  url.match(/pubmed\.ncbi\.nlm\.nih\.gov\/(\d+)/)?.[1] ?? "";
-
-const parseAuthors = ($) =>
-  [
-    ...new Set(
-      $('meta[name="citation_author"]')
-        .map((_, el) => cleanText($(el).attr("content") ?? ""))
-        .get()
-        .filter(Boolean),
-    ),
-  ];
-
-const parseTagsFromPaper = ($) => {
-  const text = cleanText($.root().text());
-
-  const match = text.match(
-    /Keywords:\s*(.+?)(?:PubMed Disclaimer|Conflict of interest statement|Figures|References|Associated data|Supplementary information|Copyright|$)/i,
-  );
-
-  if (!match?.[1]) return [];
-
-  return [
-    ...new Set(
-      match[1]
-        .split(";")
-        .map((x) => x.trim().replace(/\.$/, ""))
-        .filter(Boolean),
-    ),
-  ];
-};
-
-const parseImage = ($, baseUrl) => {
-  const href =
-    $('a[href*="cdn.ncbi.nlm.nih.gov"]').first().attr("href") ??
-    $('img[src*="cdn.ncbi.nlm.nih.gov"]').first().attr("src");
-
-  if (!href) return null;
-
-  try {
-    return new URL(href, baseUrl).toString();
-  } catch {
-    return null;
-  }
-};
-
-const parseDoi = ($) => {
-  const doiMeta =
-    $('meta[name="citation_doi"]').attr("content") ??
-    $('meta[name="citation_doi"]').attr("value");
-
-  if (doiMeta) return cleanText(doiMeta);
-
-  const text = cleanText($.root().text());
-  const match = text.match(/\bdoi:\s*([0-9]+\.[^\s;]+)/i);
-  return match ? match[1].replace(/\.$/, "") : null;
-};
-
-const parseDate = ($) => {
-  const candidates = [
-    $('meta[name="citation_publication_date"]').attr("content"),
-    $('meta[name="citation_date"]').attr("content"),
-    $('meta[name="dc.date"]').attr("content"),
-  ]
-    .filter(Boolean)
-    .map(cleanText);
-
-  if (candidates.length) return candidates[0];
-
-  const text = cleanText($.root().text());
-
-  const fullDate =
-    text.match(/\b(19|20)\d{2}\s+[A-Z][a-z]{2}\s+\d{1,2}\b/)?.[0] ??
-    text.match(/\b(19|20)\d{2}\s+[A-Z][a-z]{2}\b/)?.[0] ??
-    text.match(/\b(19|20)\d{2}\b/)?.[0];
-
-  return fullDate ?? null;
-};
-
-const parseYear = (date) => {
-  if (!date) return null;
-  const match = String(date).match(/\b(19|20)\d{2}\b/);
-  return match ? Number(match[0]) : null;
-};
-
-const getStudy = async (pubmedUrl) => {
-  const pmid = getPmid(pubmedUrl);
-  if (!pmid) {
-    console.warn(`Skipping PubMed URL without PMID: ${pubmedUrl}`);
-    return null;
-  }
-
-  try {
-    const res = await fetch(pubmedUrl, {
-      headers: { "User-Agent": "research-page/1.0" },
-    });
-
-    if (!res.ok) {
-      console.warn(`PubMed fetch failed for ${pubmedUrl}: ${res.status}`);
-      return null;
-    }
-
-    const html = await res.text();
-    const $ = cheerio.load(html);
-
-    const title =
-      cleanText($('meta[name="citation_title"]').attr("content") ?? "") ||
-      cleanText($("h1").first().text());
-
-    if (!title) {
-      console.warn(`No title found for ${pubmedUrl}`);
-      return null;
-    }
-
-    const date = parseDate($);
-    const year = parseYear(date);
-    const tags = parseTagsFromPaper($);
-
-    const study = {
-      pmid,
-      title,
-      authors: parseAuthors($),
-      link: pubmedUrl,
-      doi: parseDoi($),
-      date,
-      year,
-      tags,
-      image: parseImage($, pubmedUrl),
-    };
-
-    console.log(`Parsed PubMed study: ${pmid} | ${title} | year=${year} | tags=${tags.length}`);
-    return study;
-  } catch (err) {
-    console.warn(`Error fetching/parsing ${pubmedUrl}:`, err);
-    return null;
-  }
-};
-
-const cleanReadme = (md) =>
-  md
-    .replace(/\[!\[[^\]]*]\([^)]*\)\]\([^)]*\)/g, "")
-    .replace(/!\[[^\]]*]\([^)]*\)/g, "")
-    .replace(/<img[^>]*>/g, "")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
 
 const groupByYear = (items, keyName) =>
   Object.entries(
-    items.reduce((acc, item) => {
-      const y = item.year ?? 0;
-      if (!acc[y]) acc[y] = [];
-      acc[y].push(item);
-      return acc;
+    items.reduce((groups, item) => {
+      const year = item.year ?? 0;
+      if (!groups[year]) groups[year] = [];
+      groups[year].push(item);
+      return groups;
     }, {}),
   )
     .filter(([year]) => Number(year) > 0)
@@ -174,37 +28,75 @@ const groupByYear = (items, keyName) =>
     }));
 
 const buildPublications = async () => {
-  const urls = JSON.parse(await fs.readFile(pubmedUrlsFile, "utf8"));
+  const publications = JSON.parse(
+    await fs.readFile(publicationsMetaFile, "utf8"),
+  );
 
-  if (!Array.isArray(urls) || !urls.length) {
-    console.warn("No PubMed URLs found in urls.json");
-    return [];
+  if (!Array.isArray(publications) || !publications.length) {
+    throw new Error("Publication metadata must be a non-empty array.");
   }
 
-  const publications = (await Promise.all(urls.map(getStudy))).filter(Boolean);
+  const pmids = new Set();
 
-  console.log(`Valid PubMed studies: ${publications.length}`);
+  for (const publication of publications) {
+    if (
+      !publication.pmid ||
+      !publication.title ||
+      !publication.link ||
+      !Number.isInteger(publication.year) ||
+      !Array.isArray(publication.authors) ||
+      !Array.isArray(publication.tags)
+    ) {
+      throw new Error(
+        `Invalid publication metadata for ${publication.pmid ?? "unknown"}.`,
+      );
+    }
+
+    if (pmids.has(publication.pmid)) {
+      throw new Error(`Duplicate publication PMID: ${publication.pmid}.`);
+    }
+
+    pmids.add(publication.pmid);
+  }
+
   return groupByYear(publications, "publications");
 };
 
 const buildSoftware = async () => {
-  const meta = JSON.parse(await fs.readFile(softwareMetaFile, "utf8"));
+  const software = JSON.parse(await fs.readFile(softwareMetaFile, "utf8"));
 
-  const software = await Promise.all(
-    meta.map(async (item) => {
-      const readme = await fs.readFile(
-        path.join(githubDir, item.readmeFile),
-        "utf8",
-      );
+  if (!Array.isArray(software) || !software.length) {
+    throw new Error("Software metadata must be a non-empty array.");
+  }
 
-      return {
-        ...item,
-        readme: cleanReadme(readme),
-      };
-    }),
+  const ids = new Set();
+  const orders = new Set();
+
+  for (const item of software) {
+    if (
+      !item.id ||
+      !item.name ||
+      !item.owner ||
+      !item.repo ||
+      !item.repoUrl ||
+      !item.summary ||
+      !Array.isArray(item.tags) ||
+      !Number.isInteger(item.displayOrder)
+    ) {
+      throw new Error(`Invalid software metadata for ${item.id ?? "unknown"}.`);
+    }
+
+    if (ids.has(item.id) || orders.has(item.displayOrder)) {
+      throw new Error(`Duplicate software id or display order: ${item.id}.`);
+    }
+
+    ids.add(item.id);
+    orders.add(item.displayOrder);
+  }
+
+  return [...software].sort(
+    (first, second) => first.displayOrder - second.displayOrder,
   );
-
-  return groupByYear(software, "software");
 };
 
 const buildTsFile = (publications, software) => `export type Publication = {
@@ -214,7 +106,7 @@ const buildTsFile = (publications, software) => `export type Publication = {
   link: string;
   doi: string | null;
   date: string | null;
-  year: number | null;
+  year: number;
   tags: string[];
   image: string | null;
 };
@@ -229,22 +121,15 @@ export type SoftwareItem = {
   name: string;
   owner: string;
   repo: string;
-  branch: string;
   repoUrl: string;
-  year: number;
+  displayOrder: number;
+  summary: string;
   tags: string[];
-  readmeFile: string;
-  readme: string;
-};
-
-export type SoftwareGroup = {
-  year: number;
-  software: SoftwareItem[];
 };
 
 export const publications: PublicationGroup[] = ${JSON.stringify(publications, null, 2)};
 
-export const software: SoftwareGroup[] = ${JSON.stringify(software, null, 2)};
+export const software: SoftwareItem[] = ${JSON.stringify(software, null, 2)};
 `;
 
 const main = async () => {
@@ -253,13 +138,15 @@ const main = async () => {
     buildSoftware(),
   ]);
 
-  await fs.mkdir(path.join(root, "generated"), { recursive: true });
+  await fs.mkdir(path.dirname(outFile), { recursive: true });
   await fs.writeFile(outFile, buildTsFile(publications, software), "utf8");
 
-  console.log("Research data generated in app/research/generated/data.ts");
+  console.log(
+    `Research data generated: ${publications.length} publication year group(s), ${software.length} software record(s).`,
+  );
 };
 
-main().catch((err) => {
-  console.error(err);
+main().catch((error) => {
+  console.error(error);
   process.exit(1);
 });

@@ -1,0 +1,47 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "paulyrp-site-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-31",
+  "workers_dev": true,
+  "preview_urls": false,
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://paulyrp.github.io",
+    "TURNSTILE_HOSTNAMES": "paulyrp.github.io",
+    "GITHUB_APP_ID": "4441027",
+    "GITHUB_INSTALLATION_ID": "150201889",
+    "GITHUB_OWNER": "paulYRP",
+    "GITHUB_REPO": "paulyrp-website-messages"
+  },
+  "secrets": {
+    "required": [
+      "GITHUB_APP_PRIVATE_KEY",
+      "TURNSTILE_SECRET_KEY"
+    ]
+  },
+  "ratelimits": [
+    {
+      "name": "CHAT_RATE_LIMITER",
+      "namespace_id": "444102701",
+      "simple": {
+        "limit": 8,
+        "period": 60
+      }
+    },
+    {
+      "name": "MESSAGE_RATE_LIMITER",
+      "namespace_id": "444102702",
+      "simple": {
+        "limit": 3,
+        "period": 60
+      }
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
+}
