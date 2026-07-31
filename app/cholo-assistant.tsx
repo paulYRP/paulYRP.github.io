@@ -369,6 +369,16 @@ export default function CholoAssistant() {
                     id="assistant-question"
                     value={chatInput}
                     onChange={(event) => setChatInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (
+                        event.key === "Enter" &&
+                        !event.shiftKey &&
+                        !event.nativeEvent.isComposing
+                      ) {
+                        event.preventDefault();
+                        event.currentTarget.form?.requestSubmit();
+                      }
+                    }}
                     maxLength={600}
                     rows={2}
                     disabled={!siteApiUrl || chatPending}
@@ -377,7 +387,7 @@ export default function CholoAssistant() {
                   />
                   <div className="mt-2 flex items-center justify-between gap-3">
                     <span className="text-[11px] text-gray-500">
-                      Chat stays in this tab
+                      Enter to send · Shift + Enter for a new line
                     </span>
                     <button
                       type="submit"
